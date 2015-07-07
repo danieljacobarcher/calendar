@@ -164,17 +164,15 @@ Calendar.prototype.presetCreate = function() {
 
     if (!is_last_day)
       last_day = moment(date).subtract(1, 'month').endOf('month').startOf('day');
-
-    if (typeof month_count == 'number') {
-      first_day = moment(date).subtract(is_last_day ? month_count - 1 : month_count, 'month').startOf('month');
-
-      if (month_count == 12)
-        first_day = moment(date).subtract(is_last_day ? 12 : 13, 'month').endOf('month').startOf('day');
-    } else if (month_count == 'all') {
+    
+    if (month_count == 'all') {
       first_day = moment(self.earliest);
       last_day = moment(self.latest);
+    } else if (month_count == '7days') {
+      first_day = moment(self.latest).subtract(7, 'day');
+      last_day = moment(self.latest);
     } else {
-      first_day = moment(self.latest).subtract(30, 'day');
+      first_day = moment(self.latest).subtract(30 * month_count, 'day');
       last_day = moment(self.latest);
     }
 
@@ -622,8 +620,8 @@ Calendar.prototype.calendarHTML = function(type) {
       '</div>' +
 
       '<ul class="dr-preset-list" style="display: none;">' +
-        '<li class="dr-list-item" data-months="days">Last 30 days <span class="dr-item-aside"></span></li>' +
-        '<li class="dr-list-item" data-months="1">Last month <span class="dr-item-aside"></span></li>' +
+        '<li class="dr-list-item" data-months="7days">Last 7 days <span class="dr-item-aside"></span></li>' +
+        '<li class="dr-list-item" data-months="1">Last 30 days <span class="dr-item-aside"></span></li>' +
         '<li class="dr-list-item" data-months="3">Last 3 months <span class="dr-item-aside"></span></li>' +
         '<li class="dr-list-item" data-months="6">Last 6 months <span class="dr-item-aside"></span></li>' +
         '<li class="dr-list-item" data-months="12">Last year <span class="dr-item-aside"></span></li>' +
