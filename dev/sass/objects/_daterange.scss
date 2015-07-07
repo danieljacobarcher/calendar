@@ -1,4 +1,4 @@
-.daterange {
+.bm-daterange {
   position: relative;
 
   * {
@@ -29,7 +29,7 @@
 
       .dr-date {
         font-size: rem(15);
-        padding: rem(10.5 0);
+        padding: rem(7 0);
         text-align: center;
         white-space: nowrap;
         overflow: hidden;
@@ -42,8 +42,7 @@
       }
       .dr-dates-dash {
         color: $mouse;
-        position: relative;
-        top: -2px;
+        position: relative; 
         padding: 0 5px;
         flex-grow: 0;
         text-align: center;
@@ -268,7 +267,19 @@
       .dr-item-aside {
         color: $rat;
         font-size: rem(12);
+        margin-bottom: rem(1);
         margin-left: rem(5);
+      }
+    }
+  }
+
+  &.daterange--left {
+
+    .dr-input {
+
+      .dr-presets {
+        border-left: 0;
+        border-right: 1px solid $mouse;
       }
     }
   }

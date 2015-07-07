@@ -1,1 +1,4 @@
 node_modules/*
+
+# Ignore dumb ds_store unix files
+.DS_Store

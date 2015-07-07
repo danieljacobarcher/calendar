@@ -3,15 +3,18 @@ function Calendar(settings) {
 
   this.calIsOpen =    false;
   this.presetIsOpen = false;
-  this.element =      settings.element || $('.daterange');
+  this.element =      settings.element || $('.bm-daterange');
   this.type =         this.element.hasClass('daterange--single') ? 'single' : 'double';
+  this.left =         this.element.hasClass('daterange--left') ? true : false;
   this.selected =     null;
   this.earliest =     settings.earliest_date || new Date('January 1, 1900');
   this.latest =       settings.latest_date || new Date('December 31, 2900');
-  this.end_date =     settings.end_date || (this.type == 'double' ? new Date() : null);
-  this.start_date =   settings.start_date || (this.type == 'double' ? new Date(moment(this.end_date).subtract(1, 'month')) : null);
+  this.end_date =     settings.end_date || new Date( parseFloat(this.element.data('end-date')) ) || (this.type == 'double' ? new Date() : null);
+  this.start_date =   settings.start_date || new Date( parseFloat(this.element.data('start-date')) ) || (this.type == 'double' ? new Date(moment(this.end_date).subtract(1, 'month')) : null);
   this.current_date = settings.current_date || (this.type == 'single' ? new Date() : null);
   this.callback =     settings.callback || this.calendarSetDates;
+  this.callback_form = settings.callback_form || this.element.find('form');
+  this.loading_indicator  = settings.loading_indicator || $('.loading-indicator');
 
   this.calendarHTML(this.type);
 
@@ -183,6 +186,8 @@ Calendar.prototype.presetCreate = function() {
 Calendar.prototype.calendarSetDates = function() {
   $('.dr-date-start', this.element).html(moment(this.start_date).format('MMMM D, YYYY'));
   $('.dr-date-end', this.element).html(moment(this.end_date).format('MMMM D, YYYY'));
+  $('.dr-date-start', this.element).data('date', moment(this.start_date).toISOString());
+  $('.dr-date-end', this.element).data('date', moment(this.end_date).toISOString());
 
   if (!this.start_date && !this.end_date) {
     var old_date = $('.dr-date', this.element).html();
@@ -190,6 +195,7 @@ Calendar.prototype.calendarSetDates = function() {
 
     if (old_date != new_date)
       $('.dr-date', this.element).html(new_date);
+      $('.dr-date', this.element).data('date', moment(this.current_date).toISOString());
   }
 }
 
@@ -200,43 +206,47 @@ Calendar.prototype.calendarSaveDates = function() {
 
 
 Calendar.prototype.calendarCheckDates = function() {
-  var regex = /(?!<=\d)(st|nd|rd|th)/;
-  var s = $('.dr-date-start', this.element).html();
-  var e = $('.dr-date-end', this.element).html();
-  var c = $(this.selected).html();
-  var s_array = [];
-  var e_array = [];
-  var c_array = [];
+  // var regex = /(?!<=\d)(st|nd|rd|th)/;
+  // var s = $('.dr-date-start', this.element).html();
+  // var e = $('.dr-date-end', this.element).html();
+  var s = $('.dr-date-start', this.element).data('date');
+  var e = $('.dr-date-end', this.element).data('date');
+  var c = $(this.selected).data('date');
+  // console.log('checkdates');
+  // console.log ( $(this.selected).data('date') );
+  // var s_array = [];
+  // var e_array = [];
+  // var c_array = [];
 
-  if (s) {
-    s = s.replace(regex, '');
-    s_array = s.split(' ');
-  }
+  // if (s) {
+  //   s = s.replace(regex, '');
+  //   s_array = s.split(' ');
+  // }
 
-  if (e) {
-    e = e.replace(regex, '');
-    e_array = e.split(' ');
-  }
+  // if (e) {
+  //   e = e.replace(regex, '');
+  //   e_array = e.split(' ');
+  // }
 
-  if (c) {
-    c = c.replace(regex, '');
-    c_array = c.split(' ');
-  }
+  // if (c) {
+  //   c = c.replace(regex, '');
+  //   c_array = c.split(' ');
+  // }
 
-  if (s_array.length == 2) {
-    s_array.push(moment().format('YYYY'))
-    s = s_array.join(' ');
-  }
+  // if (s_array.length == 2) {
+  //   s_array.push(moment().format('YYYY'))
+  //   s = s_array.join(' ');
+  // }
 
-  if (e_array.length == 2) {
-    e_array.push(moment().format('YYYY'))
-    e = e_array.join(' ');
-  }
+  // if (e_array.length == 2) {
+  //   e_array.push(moment().format('YYYY'))
+  //   e = e_array.join(' ');
+  // }
 
-  if (c_array.length == 2) {
-    c_array.push(moment().format('YYYY'))
-    c = c_array.join(' ');
-  }
+  // if (c_array.length == 2) {
+  //   c_array.push(moment().format('YYYY'))
+  //   c = c_array.join(' ');
+  // }
 
   s = new Date(s);
   e = new Date(e);
@@ -244,7 +254,6 @@ Calendar.prototype.calendarCheckDates = function() {
 
   if (moment(s).isAfter(e) || 
       moment(e).isBefore(s) || 
-      moment(s).isSame(e) ||
       moment(s).isBefore(this.earliest) ||
       moment(e).isAfter(this.latest)) {
     return this.calendarSetDates();
@@ -327,14 +336,17 @@ Calendar.prototype.calendarOpen = function(selected, switcher) {
           var prev = selected.prev().data('date');
           var curr = selected.data('date');
 
-          if (!curr)
+          if (!curr) {
             return false;
+          }
 
-          if (!prev)
+          if (!prev) {
             prev = curr;
+          }
 
-          if (!next)
+          if (!next) {
             next = curr;
+          }
 
           if (type == 'start')
             if (moment(next).isSame(self.end_date))
@@ -402,6 +414,7 @@ Calendar.prototype.calendarOpen = function(selected, switcher) {
       }
 
       $(self.selected).html(string);
+      $(self.selected).data('date', date);
       self.calendarOpen(self.selected);
 
       if ($(self.selected).hasClass('dr-date-start')) {
@@ -564,21 +577,24 @@ Calendar.prototype.calendarCreate = function(switcher) {
 
 
 Calendar.prototype.calendarHTML = function(type) {
-  if (type == "double")
-    return this.element.append('<div class="dr-input">' +
-      '<div class="dr-dates">' +
-        '<div class="dr-date dr-date-start" contenteditable>'+ moment(this.start_date).format('MMMM D, YYYY') +'</div>' +
+  if (type == "double") {
+    var drInput;
+    var presetBars = '<div class="dr-presets">' +
+        '<span class="dr-preset-bar"></span>' +
+        '<span class="dr-preset-bar"></span>' +
+        '<span class="dr-preset-bar"></span>' +
+      '</div>';
+    var dates = '<div class="dr-dates">' +
+        '<div class="dr-date dr-date-start" data-date="'+ moment(this.start_date).toISOString() +'" contenteditable>'+ moment(this.start_date).format('MMMM D, YYYY') +'</div>' +
         '<span class="dr-dates-dash">–</span>' +
-        '<div class="dr-date dr-date-end" contenteditable>'+ moment(this.end_date).format('MMMM D, YYYY') +'</div>' +
-      '</div>' +
-
-      '<div class="dr-presets">' +
-        '<span class="dr-preset-bar"></span>' +
-        '<span class="dr-preset-bar"></span>' +
-        '<span class="dr-preset-bar"></span>' +
-      '</div>' +
-    '</div>' +
-
+        '<div class="dr-date dr-date-end" data-date="'+ moment(this.end_date).toISOString() +'" contenteditable>'+ moment(this.end_date).format('MMMM D, YYYY') +'</div>' +
+      '</div>';
+    if (this.left) {
+      drInput = '<div class="dr-input">' + presetBars + dates + '</div>';
+    } else {
+      drInput = '<div class="dr-input">' + dates + presetBars + '</div>';
+    }
+    return this.element.append( drInput +
     '<div class="dr-selections">' +
       '<div class="dr-calendar" style="display: none;">' +
         '<div class="dr-range-switcher">' +
@@ -614,37 +630,38 @@ Calendar.prototype.calendarHTML = function(type) {
         '<li class="dr-list-item" data-months="all">All time <span class="dr-item-aside"></span></li>' +
       '</ul>' +
     '</div>');
-
-  return this.element.append('<div class="dr-input">' +
-    '<div class="dr-dates">' +
-      '<div class="dr-date" contenteditable>'+ moment(this.current_date).format('MMMM D, YYYY') +'</div>' +
-    '</div>' +
-  '</div>' +
-
-  '<div class="dr-selections">' +
-    '<div class="dr-calendar" style="display: none;">' +
-      '<div class="dr-range-switcher">' +
-        '<div class="dr-switcher dr-month-switcher">' +
-          '<i class="dr-left"></i>' +
-          '<span></span>' +
-          '<i class="dr-right"></i>' +
-        '</div>' +
-        '<div class="dr-switcher dr-year-switcher">' +
-          '<i class="dr-left"></i>' +
-          '<span></span>' +
-          '<i class="dr-right"></i>' +
-        '</div>' +
+  } else {
+    return this.element.append('<div class="dr-input">' +
+      '<div class="dr-dates">' +
+        '<div class="dr-date" data-date="'+ moment(this.current_date).toISOString() +'" contenteditable>'+ moment(this.current_date).format('MMMM D, YYYY') +'</div>' +
       '</div>' +
-      '<ul class="dr-days-of-week-list">' +
-        '<li class="dr-day-of-week">S</li>' +
-        '<li class="dr-day-of-week">M</li>' +
-        '<li class="dr-day-of-week">T</li>' +
-        '<li class="dr-day-of-week">W</li>' +
-        '<li class="dr-day-of-week">T</li>' +
-        '<li class="dr-day-of-week">F</li>' +
-        '<li class="dr-day-of-week">S</li>' +
-      '</ul>' +
-      '<ul class="dr-day-list"></ul>' +
     '</div>' +
-  '</div>');
+
+    '<div class="dr-selections">' +
+      '<div class="dr-calendar" style="display: none;">' +
+        '<div class="dr-range-switcher">' +
+          '<div class="dr-switcher dr-month-switcher">' +
+            '<i class="dr-left"></i>' +
+            '<span></span>' +
+            '<i class="dr-right"></i>' +
+          '</div>' +
+          '<div class="dr-switcher dr-year-switcher">' +
+            '<i class="dr-left"></i>' +
+            '<span></span>' +
+            '<i class="dr-right"></i>' +
+          '</div>' +
+        '</div>' +
+        '<ul class="dr-days-of-week-list">' +
+          '<li class="dr-day-of-week">S</li>' +
+          '<li class="dr-day-of-week">M</li>' +
+          '<li class="dr-day-of-week">T</li>' +
+          '<li class="dr-day-of-week">W</li>' +
+          '<li class="dr-day-of-week">T</li>' +
+          '<li class="dr-day-of-week">F</li>' +
+          '<li class="dr-day-of-week">S</li>' +
+        '</ul>' +
+        '<ul class="dr-day-list"></ul>' +
+      '</div>' +
+    '</div>');
+  }
 }
