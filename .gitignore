@@ -1,4 +1,10 @@
+<<<<<<< HEAD
 node_modules/*
 
 # Ignore dumb ds_store unix files
 .DS_Store
+=======
+.publish
+node_modules
+public/.DS_Store
+>>>>>>> 1c7750f2015597227117d8b1e28d766b1880ac4d

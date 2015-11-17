@@ -4,6 +4,17 @@
   * {
     box-sizing: border-box;
   }
+  div, span, ul, li {
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+  ul {
+    list-style: none;
+  }
+  &.dr-active {
+    z-index: 10;
+  }
   .dr-input {
     display: flex;
     border: 1px solid $mouse;
@@ -16,7 +27,7 @@
     &:hover {
       border-color: $blue;
     }
-    &.active {
+    &.dr-active {
       box-shadow: 0 0 0 3px rgba($bluemoon, 0.8);
       border-color: $blue;
     }
@@ -36,7 +47,7 @@
         text-overflow: ellipsis;
         outline: none;
 
-        &:hover, &:focus, &.active {
+        &:hover, &:focus, &.dr-active {
           color: $blue;
         }
       }
@@ -59,7 +70,7 @@
       align-items: flex-start;
       justify-content: center;
 
-      &:hover, &.active {
+      &:hover, &.dr-active {
         border-color: $blue;
         box-shadow: inset 0 2px 3px $moon;
 
@@ -84,7 +95,6 @@
       }
     }
   }
-
 
   .dr-selections {
     position: absolute;
@@ -301,5 +311,5 @@
         text-align: left;
       }
     }
-  } 
+  }
 }

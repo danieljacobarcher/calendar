@@ -1,4 +1,7 @@
 # [Baremetrics](https://baremetrics.com/) Date Range Picker
+_[Baremetrics](https://baremetrics.com) provides one-click analytics & insights for Stripe. **[Get started today!](https://baremetrics.com)**_
+
+---
 
 The Baremetrics date range picker is a simplified solution for selecting both date ranges and single dates all from a single calender view. There aren't a billion options but the code is pretty basic and modular so feel free to edit however to meet your own needs.
 
@@ -27,54 +30,66 @@ Next you've just gotta create a `new Calendar` instance.
 ```js
 new Calendar({
   element: $('.daterange--single'),
-  current_date: new Date('June 15, 2015')
+  current_date: 'June 15, 2015'
 });
 
 new Calendar({
   element: $('.daterange--double'),
-  earliest_date: new Date('January 1, 2000'),
+  earliest_date: 'January 1, 2000',
   latest_date: new Date(),
-  start_date: new Date('May 1, 2015'),
-  end_date: new Date('May 31, 2015'),
+  start_date: 'May 1, 2015',
+  end_date: 'May 31, 2015',
   callback: function() {
     var start = moment(this.start_date).format('ll'),
         end = moment(this.end_date).format('ll');
     
-    console.log('Start Date: '+ start +'\nEnd Date: '+ end);
+    console.debug('Start Date: '+ start +'\nEnd Date: '+ end);
   }
-}
+});
 ```
 
-### Single Calendar params
-- element\*
+### Base Calendar Params
+- element _\*required_
   - jQuery DOM object of the calendar div you're working on
-- callback
-  - A function for whenever a new date is saved
-  - Inside you have access to variables like `this.earliest`, `this.latest`, `this.end_date` and `this.start_date` for doing things with the new dates.
 - earliest_date
   - The earliest date to show in the calendar
 - latest_date
   - The latest date to show in the calendar
+- callback
+  - A function for whenever a new date is saved
+  - Inside you have access to variables like `this.earliest_date`, `this.latest_date` and `this.current_date` for doing things with the new dates
+- format 
+  - Object containing formatting strings for.. you guessed it.. formating your dates
+  ```js
+    format: {
+      input: 'MMMM D, YYYY', // Format for the input fields
+      jump_month: 'MMMM', // Format for the month switcher
+      jump_year: 'YYYY' // Format for the year switcher
+    }
+  ```
+- days_array
+  - Array of the 7 strings you'd like to represent your days in the calendar
+  ```js
+    days_array: ['Su','Mo','Tu','We','Th','Fr','Sa']
+  ```
+
+### Single Calendar Params
 - current_date
   - The date to start the calendar on
 
-### Double Calendar params
-- element\*
-  - jQuery DOM object of the calendar div you're working on
+### Double Calendar Params
 - callback
-  - A function for whenever a new date is saved
-  - Inside you have access to variables like `this.earliest`, `this.latest`, `this.end_date` and `this.start_date` for doing things with the new dates.
-- earliest_date
-  - The earliest date to show in the calendar
-- latest_date
-  - The latest date to show in the calendar
+  - The double calendar includes access to `this.end_date` and `this.start_date`
 - start_date
   - The date to start the selection on for the calendar
 - end_date
   - The date to end the selection on for the calendar
+- format
+  - The double calendar adds the `preset` key to the format object for formatting the preset dates in the preset dropdown
+- same_day_range
+  - Allow a range selection of a single day
 
 ---
-\* required
 
 ## Developing
 
@@ -87,3 +102,7 @@ $ gulp
 ```
 
 I also use [pow](http://pow.cx/) and the [powder gem](https://github.com/Rodreegez/powder) to run my local dev environments but however you plan on wrangling that the gulpfile turns on a livereload server so as long as you have the files serving somehow any changes you make will show up instantly.
+
+## Dependencies
+- [jQuery](https://jquery.com/)
+- [MomentJS](http://momentjs.com/)
