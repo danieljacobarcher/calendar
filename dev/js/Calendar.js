@@ -23,7 +23,7 @@
     this.selected =       null;
 
     this.type =           this.element.hasClass('daterange--single') ? 'single' : 'double';
-    this.left =         this.element.hasClass('daterange--left') ? true : false;
+    this.preset_left =           settings.preset_left || false;
 
     this.format = settings.format || {};
     this.format.input =   settings.format && settings.format.input || 'MMMM D, YYYY';
@@ -248,7 +248,7 @@
       } else if (month_count == '7days') {
         first_day = moment(self.latest_date).subtract(7, 'day');
         last_day = moment(self.latest_date);
-      } else {
+      } else if (month_count == '30days') {
         first_day = moment(self.latest_date).subtract(29, 'day');
         last_day = moment(self.latest_date);
       }
@@ -706,7 +706,7 @@
           '<span class="dr-dates-dash">&ndash;</span>' +
           '<div class="dr-date dr-date-end" contenteditable>'+ moment(this.end_date).format(this.format.input) +'</div>' +
         '</div>';
-      if (this.left) {
+      if (this.preset_left) {
         drInput = '<div class="dr-input">' + presetBars + dates + '</div>';
       } else {
         drInput = '<div class="dr-input">' + dates + presetBars + '</div>';
@@ -733,7 +733,7 @@
 
         '<ul class="dr-preset-list" style="display: none;">' +
           '<li class="dr-list-item" data-months="7days">Last 7 days <span class="dr-item-aside"></span></li>' +
-          '<li class="dr-list-item" data-months="1">Last month <span class="dr-item-aside"></span></li>' +
+          '<li class="dr-list-item" data-months="30days">Last 30 days <span class="dr-item-aside"></span></li>' +
           '<li class="dr-list-item" data-months="3">Last 3 months <span class="dr-item-aside"></span></li>' +
           '<li class="dr-list-item" data-months="6">Last 6 months <span class="dr-item-aside"></span></li>' +
           '<li class="dr-list-item" data-months="12">Last year <span class="dr-item-aside"></span></li>' +

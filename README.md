@@ -42,7 +42,7 @@ new Calendar({
   callback: function() {
     var start = moment(this.start_date).format('ll'),
         end = moment(this.end_date).format('ll');
-    
+
     console.debug('Start Date: '+ start +'\nEnd Date: '+ end);
   }
 });
@@ -58,7 +58,7 @@ new Calendar({
 - callback
   - A function for whenever a new date is saved
   - Inside you have access to variables like `this.earliest_date`, `this.latest_date` and `this.current_date` for doing things with the new dates
-- format 
+- format
   - Object containing formatting strings for.. you guessed it.. formating your dates
   ```js
     format: {
@@ -88,6 +88,8 @@ new Calendar({
   - The double calendar adds the `preset` key to the format object for formatting the preset dates in the preset dropdown
 - same_day_range
   - Allow a range selection of a single day
+- preset_left
+  - The preset button is left-aligned, default is false.
 
 ---
 
